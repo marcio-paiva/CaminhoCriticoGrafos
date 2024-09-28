@@ -6,7 +6,7 @@ def carregar_grafo(arquivo):
     grafo = defaultdict(list)
     duracao = {}
     nomes = {}
-    
+
     with open(arquivo, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -14,23 +14,23 @@ def carregar_grafo(arquivo):
             nome = row['Nome']
             periodo = int(row['Período'])
             dur = int(row['Duração'])
-            dependencias = row['Dependências'].split(',') if row['Dependências'] else []
-            
+            dependencias = row['Dependências'].split(';') if row['Dependências'] else []
+
             duracao[codigo] = dur
             nomes[codigo] = nome
-            
+
             for dep in dependencias:
                 grafo[dep].append(codigo)
-    
+
     return grafo, duracao, nomes
 
-# Algoritmo para encontrar o caminho crítico (caminho máximo)
-def encontrar_caminho_critico(grafo, duracao):
-    distancias = defaultdict(lambda: -float('inf'))  # Inicializa com -∞
-    distancias['s'] = 0  # O nó inicial tem distância 0
-    predecessores = {}
+# Algoritmo para encontrar os caminhos críticos
+def encontrar_caminhos_criticos(grafo, duracao):
+    distancias = defaultdict(lambda: -float('inf'))
+    distancias['s'] = 0
+    predecessores = defaultdict(list)
 
-    # Ordenação topológica para evitar ciclos
+    # Função interna para realizar a ordenação topológica
     def ordenacao_topologica(grafo):
         grau_entrada = defaultdict(int)
         for u in grafo:
@@ -53,27 +53,35 @@ def encontrar_caminho_critico(grafo, duracao):
     # Relaxamento das arestas na ordem topológica
     for u in ordem:
         for v in grafo[u]:
-            if distancias[v] < distancias[u] + duracao.get(u, 0):  # Usa duracao.get para evitar KeyError
+            if distancias[v] < distancias[u] + duracao.get(u, 0):
                 distancias[v] = distancias[u] + duracao.get(u, 0)
-                predecessores[v] = u
+                predecessores[v] = [u]  # Substitui a lista de predecessores
+            elif distancias[v] == distancias[u] + duracao.get(u, 0):
+                predecessores[v].append(u)  # Adiciona um novo predecessor
 
-    # Caminho crítico
-    caminho_critico = []
-    u = 't'  # Nó de destino
-    while u in predecessores:
-        caminho_critico.append(u)
-        u = predecessores[u]
-    caminho_critico.append('s')
-    caminho_critico.reverse()
+    # Caminhos críticos
+    caminhos_criticos = []
+    max_distancia = distancias['t']
+    def encontrar_caminho(atual, caminho):
+        if atual == 's':
+            caminhos_criticos.append(caminho[::-1])  # Adiciona o caminho invertido
+            return
+        for pred in predecessores[atual]:
+            encontrar_caminho(pred, caminho + [pred])
 
-    return caminho_critico, distancias['t']
+    # Inicia a busca pelo caminho crítico
+    encontrar_caminho('t', ['t'])
 
-# Função para exibir o caminho crítico
-def exibir_caminho_critico(caminho_critico, nomes, duracao_total):
-    print("Caminho Crítico:")
-    for codigo in caminho_critico[1:-1]:
-        print(f"- {nomes[codigo]}")
-    print(f"\nTempo Mínimo: {duracao_total}")
+    return caminhos_criticos, max_distancia
+
+# Função para exibir os caminhos críticos
+def exibir_caminhos_criticos(caminhos_criticos, nomes, duracao_total):
+    print("Caminhos Críticos:")
+    for caminho in caminhos_criticos:
+        for codigo in caminho[1:-1]:  # Ignora 's' e 't'
+            print(f"- {nomes[codigo]}")
+        print()  # Linha em branco entre os caminhos
+    print(f"Tempo Mínimo: {duracao_total}")
 
 # Função principal de interação com o usuário
 def main():
@@ -84,20 +92,23 @@ def main():
 
         print("\nProcessando...")
         grafo, duracao, nomes = carregar_grafo(arquivo)
-        
-        # Adiciona nós fictícios "s" e "t" para representar o início e o fim
+
+        # Adiciona nós fictícios "s" e "t"
+        grafo['s'] = []
+        grafo['t'] = []
+
         for codigo in nomes:
             if all(codigo not in grafo[dep] for dep in grafo):
                 grafo['s'].append(codigo)
             if not grafo[codigo]:
                 grafo[codigo].append('t')
-        
+
         # Adiciona duração zero para os nós fictícios "s" e "t"
         duracao['s'] = 0
         duracao['t'] = 0
 
-        caminho_critico, duracao_total = encontrar_caminho_critico(grafo, duracao)
-        exibir_caminho_critico(caminho_critico, nomes, duracao_total)
+        caminhos_criticos, duracao_total = encontrar_caminhos_criticos(grafo, duracao)
+        exibir_caminhos_criticos(caminhos_criticos, nomes, duracao_total)
 
 if __name__ == "__main__":
     main()
