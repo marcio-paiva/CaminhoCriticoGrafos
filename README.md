@@ -9,7 +9,7 @@ Este projeto tem como objetivo resolver o problema do cálculo do caminho críti
 O programa é estruturado em várias funções principais:
 
 - **Carregar o Grafo**: Lê o arquivo CSV e constrói um grafo que representa as disciplinas e suas dependências.
-- **Encontrar o Caminho Crítico**: Utiliza um algoritmo de ordenação topológica e relaxamento de arestas para calcular o caminho crítico no grafo.
+- **Encontrar o Caminho Crítico**: Utiliza um algoritmo de ordenação topológica para calcular o caminho crítico no grafo.
 - **Exibir o Caminho Crítico**: Formata e exibe o caminho crítico e o tempo mínimo total ao usuário.
 
 ## 2. Implementação
@@ -56,7 +56,7 @@ O programa é estruturado em várias funções principais:
 - **`encontrar_caminho_critico(grafo, duracao)`**: Implementa o algoritmo de ordenação topológica para calcular o caminho crítico e a duração total. A função realiza o seguinte:
   - Inicializa as distâncias com -∞, exceto para o nó inicial 's', que é 0.
   - Realiza a ordenação topológica dos nós.
-  - Relaxa as arestas do grafo conforme a ordem topológica para atualizar as distâncias.
+  - Atualiza as distâncias do grafo conforme a ordem topológica, verificando se os valores podem ser melhorados ao percorrer as arestas.
   
 - **`exibir_caminho_critico(caminho_critico, nomes, duracao_total)`**: Formata e exibe o caminho crítico e o tempo total.
 
@@ -86,32 +86,28 @@ Caminho Crítico:
 
 ## 3. Listagem de Testes Executados
 
-### Teste 1: Arquivo Válido
+### Teste 1: Arquivo Válido (TOY.csv)
 - **Entrada**: Um arquivo CSV corretamente formatado.
 - **Resultado Esperado**: O caminho crítico e o tempo total devem ser exibidos corretamente.
 - **Resultado Obtido**: Corretamente exibido.
 
-### Teste 2: Arquivo Vazio
-- **Entrada**: Um arquivo CSV vazio.
-- **Resultado Esperado**: Mensagem de erro ao tentar processar um arquivo vazio.
-- **Resultado Obtido**: Mensagem de erro foi gerada corretamente.
+### Teste 2: Arquivo Válido (SJM.csv)
+- **Entrada**: Um arquivo CSV corretamente formatado.
+- **Resultado Esperado**: O caminho crítico e o tempo total devem ser exibidos corretamente.
+- **Resultado Obtido**: Corretamente exibido.
 
-### Teste 3: Dependências Cíclicas
-- **Entrada**: Um arquivo com dependências que formam um ciclo.
-- **Resultado Esperado**: Mensagem de erro sobre a presença de um ciclo.
-- **Resultado Obtido**: Mensagem de erro foi gerada corretamente.
-
-### Teste 4: Disciplina Sem Dependências
+### Teste 3: Disciplina Sem Dependências (teste3.txt)
 - **Entrada**: Um arquivo onde algumas disciplinas não têm dependências.
 - **Resultado Esperado**: O caminho crítico deve incluir essas disciplinas como pontos de partida.
 - **Resultado Obtido**: O resultado foi exibido corretamente.
 
 ## 4. Conclusão
 
-O projeto foi bem-sucedido em calcular o caminho crítico a partir de um conjunto de disciplinas e suas dependências. Durante a implementação, algumas dificuldades foram encontradas, principalmente relacionadas à manipulação do grafo e à ordenação topológica. A abordagem adotada provou ser eficaz, e os testes realizados demonstraram a robustez do programa.
+O projeto foi bem-sucedido em calcular o caminho crítico a partir de um conjunto de disciplinas e suas dependências. Durante a implementação, algumas dificuldades foram encontradas, principalmente relacionadas à manipulação do grafo e à mais de um caminho crítico no mesmo grafo. Por fim a solução implementada provou ser eficaz através dos testes realizados.
 
-## 5. Bibliografia
+## 5. Referências Utilizadas
 
-1. Cormen, Thomas H., et al. *Introduction to Algorithms*. MIT Press, 2009.
-2. Knuth, Donald E. *The Art of Computer Programming, Volume 1: Fundamental Algorithms*. Addison-Wesley, 1997.
-3. Sítio da Internet: [GeeksforGeeks](https://www.geeksforgeeks.org/) - Utilizado para referência sobre algoritmos de grafos e ordenação topológica.
+1. Vídeo: Problemas do caminho mínimo 01. YouTube. Disponível em: https://youtu.be/A_KIv9XrVok?si=il-gRS9ArDweBBsK
+2. Vídeo: Problemas do caminho mínimo 02. YouTube. Disponível em: https://youtu.be/eutdJ_B3Dk4?si=rsKvsfShmErrUHN6
+3. ChatGPT: ferramenta de inteligência artificial
+4. Artigo: "O algoritmo de Dijkstra em Python: encontrando o caminho mais curto". Dio.me. Disponível em: https://www.dio.me/articles/o-algoritmo-de-dijkstra-em-python-encontrando-o-caminho-mais-curto.
